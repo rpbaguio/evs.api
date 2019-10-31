@@ -1,2 +1,2 @@
-# evs.api
+# EVS API
 Electronic Voting System - API
