@@ -29,6 +29,7 @@ class Positions_model extends CI_Model
                 't1.name,' .          
                 't1.desc,' .
                 't1.max_selection,' .
+                't1.sequence,' .
                 't1.dt_created,' .
                 'CONCAT(t2.first_name, " ", t2.last_name) AS created_by,' .
                 't1.dt_updated,' .
@@ -38,8 +39,32 @@ class Positions_model extends CI_Model
             ->join('persons AS t3', 't3.id = t1.updated_by', 'left')                
             ->where('t1.is_deleted', 0)
             ->order_by('t1.id', 'DESC');
-        
+      
         return json_decode($this->datatables->generate());
+    }
+
+    public function _get_positions()
+    {
+        $this->db
+            ->select(
+                't1.id,' .
+                't1.name,' .          
+                't1.desc,' .
+                't1.max_selection,' .
+                't1.sequence,' .
+                't1.dt_created,' .
+                'CONCAT(t2.first_name, " ", t2.last_name) AS created_by,' .
+                't1.dt_updated,' .
+                'CONCAT(t3.first_name, " ", t3.last_name) AS updated_by')
+            ->from('positions AS t1')
+            ->join('persons AS t2', 't2.id = t1.created_by', 'left')          
+            ->join('persons AS t3', 't3.id = t1.updated_by', 'left')                
+            ->where('t1.is_deleted', 0)
+            ->order_by('t1.sequence', 'ASC');
+        
+        $query = $this->db->get();
+
+        return ($query->num_rows() > 0) ? $query->result_array() : false;
     }
 
     public function _get_by_id($id)
@@ -50,6 +75,7 @@ class Positions_model extends CI_Model
                 't1.name,' .          
                 't1.desc,' .
                 't1.max_selection,' .
+                't1.sequence,' .
                 't1.dt_created,' .
                 'CONCAT(t2.first_name, " ", t2.last_name) AS created_by,' .
                 't1.dt_updated,' .
@@ -67,6 +93,21 @@ class Positions_model extends CI_Model
         $query = $this->db->get();
 
         return ($query->num_rows() > 0) ? $query->row() : false;
+    }
+
+    public function _get_by_name($name)
+    {
+        $this->db
+            ->select(
+                't1.id,' .
+                't1.name AS text')
+            ->from('positions AS t1')
+            ->where('is_deleted', 0)
+            ->like('name', $name);
+
+        $query = $this->db->get();
+
+        return ($query->num_rows() > 0) ? $query->result_array() : false;
     }
 
     public function _create($data)

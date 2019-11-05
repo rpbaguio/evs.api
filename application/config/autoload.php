@@ -60,7 +60,8 @@ $autoload['packages'] = array();
 */
 $autoload['libraries'] = array(
     'database',
-    'datatables'
+    'datatables',
+    'ciqrcode'
 );
 
 /*
@@ -145,5 +146,6 @@ $autoload['model'] = array(
     'persons_model',
     'positions_model',
     'groups_model', 
+    'tally_model',
     'settings_model'
 );

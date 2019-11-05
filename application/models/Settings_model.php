@@ -37,6 +37,23 @@ class Settings_model extends CI_Model
         return ($query->num_rows() > 0) ? $query->row() : false;
     }
 
+    public function _get_by_id($id)
+    {
+        $this->db
+            ->select(
+                't1.id,' .
+                't1.header,' .          
+                't1.slogan,' .
+                't1.footer,' .
+                't1.logo,')
+            ->from('settings AS t1')
+            ->where('t1.id', $id);
+        
+        $query = $this->db->get();
+
+        return ($query->num_rows() > 0) ? $query->row() : false;
+    }
+
     public function _update($id, $data)
     {
         $this->db->trans_begin();

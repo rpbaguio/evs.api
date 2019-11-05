@@ -5,7 +5,7 @@
     Location    : application/controllers/Persons.php
     Purpose     : Persons controller
     Created     : 11/01/2019 16:40:48 by rpbaguio
-    Updated     : 
+    Updated     : 11/02/2019 12:10:08 by rpbaguio
     Changes     : 
 */
 
@@ -25,7 +25,7 @@ class Persons extends REST_Controller
     }
 
     public function index_get()
-    {
+    {    
         $get_all = $this->persons_model->_get_all();
 
         if (empty($get_all)) {
@@ -64,7 +64,14 @@ class Persons extends REST_Controller
     public function create_post()
     {
         $data = [
-            'name' => $this->post('name'),
+            'prefix' => $this->post('prefix'),
+            'first_name' => $this->post('first_name'),
+            'last_name' => $this->post('last_name'),
+            'suffix' => $this->post('suffix'),
+            'group_id' => $this->post('group_id'),
+            'is_candidate' => $this->post('is_candidate'),
+            'position_id' => $this->post('position_id'),
+            'gender_id' => $this->post('gender_id'),
             'created_by' => $this->post('user_id'),
             'dt_created' => date('Y-m-d H:i:s')
         ];
@@ -86,7 +93,13 @@ class Persons extends REST_Controller
     public function update_put()
     {
         $data = [
-            'name' => $this->put('name'),
+            'access_code' => hash('sha512', $this->put('access_code')),
+            'prefix' => $this->put('prefix'),
+            'first_name' => $this->put('first_name'),
+            'last_name' => $this->put('last_name'),
+            'suffix' => $this->put('suffix'),
+            'group_id' => $this->put('group_id'),
+            'is_validated' => 1,
             'updated_by' => $this->put('user_id'),
             'dt_updated' => date('Y-m-d H:i:s')
         ];
@@ -126,7 +139,7 @@ class Persons extends REST_Controller
             $this->persons_model->_update($id, $data);
             $this->response([
                 'status' => TRUE,
-                'message' => 'Updated'
+                'message' => 'Deleted'
             ], REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
         }
     }

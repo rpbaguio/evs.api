@@ -69,6 +69,21 @@ class Groups_model extends CI_Model
         return ($query->num_rows() > 0) ? $query->row() : false;
     }
 
+    public function _get_by_name($name)
+    {
+        $this->db
+            ->select(
+                't1.id,' .
+                't1.long_name AS text')
+            ->from('groups AS t1')
+            ->where('is_deleted', 0)
+            ->like('long_name', $name);
+
+        $query = $this->db->get();
+
+        return ($query->num_rows() > 0) ? $query->result_array() : false;
+    }
+
     public function _create($data)
     {
         $this->db->trans_begin();

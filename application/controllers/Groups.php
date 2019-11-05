@@ -28,13 +28,28 @@ class Groups extends REST_Controller
     {
         $get_all = $this->groups_model->_get_all();
 
-        if (empty($get_all)) {
+        $q = (string)$this->get('q');
+
+        if (empty($q)) {
+            if (empty($get_all)) {
+                $this->response([
+                    'status' => FALSE,
+                    'message' => 'Not Found'
+                ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+            } else {
+                $this->response($get_all, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            }
+        }
+
+        $get_by_name = $this->groups_model->_get_by_name($q);
+
+        if (empty($get_by_name)) {
             $this->response([
                 'status' => FALSE,
                 'message' => 'Not Found'
             ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
         } else {
-            $this->response($get_all, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            $this->response($get_by_name, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
         }
     }
 
@@ -64,7 +79,8 @@ class Groups extends REST_Controller
     public function create_post()
     {
         $data = [
-            'name' => $this->post('name'),
+            'short_name' => $this->post('short_name'),
+            'long_name' => $this->post('long_name'),
             'created_by' => $this->post('user_id'),
             'dt_created' => date('Y-m-d H:i:s')
         ];
@@ -86,7 +102,8 @@ class Groups extends REST_Controller
     public function update_put()
     {
         $data = [
-            'name' => $this->put('name'),
+            'short_name' => $this->put('short_name'),
+            'long_name' => $this->put('long_name'),
             'updated_by' => $this->put('user_id'),
             'dt_updated' => date('Y-m-d H:i:s')
         ];
@@ -126,7 +143,7 @@ class Groups extends REST_Controller
             $this->groups_model->_update($id, $data);
             $this->response([
                 'status' => TRUE,
-                'message' => 'Updated'
+                'message' => 'Deleted'
             ], REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
         }
     }

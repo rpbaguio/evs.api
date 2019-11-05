@@ -1,11 +1,11 @@
 <?php
 
 /*
-    Filename    : Positions.php
-    Location    : application/controllers/Positions.php
-    Purpose     : Positions controller
-    Created     : 11/01/2019 16:40:48 by rpbaguio
-    Updated     : 11/04/2019 15:33:58 by rpbaguio
+    Filename    : Candidates.php
+    Location    : application/controllers/Candidates.php
+    Purpose     : Candidates controller
+    Created     : 11/02/2019 16:40:48 by rpbaguio
+    Updated     : 11/04/2019 16:03:14 by rpbaguio
     Changes     : 
 */
 
@@ -16,7 +16,7 @@ use Restserver\Libraries\REST_Controller;
 require APPPATH . 'libraries/REST_Controller.php';
 require APPPATH . 'libraries/Format.php';
 
-class Positions extends REST_Controller
+class Candidates extends REST_Controller
 {
     function __construct()
     {
@@ -25,12 +25,12 @@ class Positions extends REST_Controller
     }
 
     public function index_get()
-    {
-        $get_all = $this->positions_model->_get_all();
+    {    
+        $get_all = $this->persons_model->_get_is_candidate();
 
-        $q = (string)$this->get('q');
+        $position_id = (int)$this->get('position_id');
 
-        if (empty($q)) {
+        if (empty($position_id)) {
             if (empty($get_all)) {
                 $this->response([
                     'status' => FALSE,
@@ -41,33 +41,19 @@ class Positions extends REST_Controller
             }
         }
 
-        $get_by_name = $this->positions_model->_get_by_name($q);
+        $get_by_position_id = $this->persons_model->_get_by_position_id($position_id);
 
-        if (empty($get_by_name)) {
+        if (empty($get_by_position_id)) {
             $this->response([
                 'status' => FALSE,
                 'message' => 'Not Found'
             ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
         } else {
-            $this->response($get_by_name, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            $this->response($get_by_position_id, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
         }
     }
 
-    public function positions_get()
-    {
-        $get_positions = $this->positions_model->_get_positions();
-
-        if (empty($get_positions)) {
-            $this->response([
-                'status' => FALSE,
-                'message' => 'Not Found'
-            ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
-        } else {
-            $this->response($get_positions, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
-        }
-    }
-
-    public function position_get()
+    public function candidate_get()
     {
         $id = (int)$this->get('id');
 
@@ -78,24 +64,27 @@ class Positions extends REST_Controller
             ], REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
         }
 
-        $get_by_id = $this->positions_model->_get_by_id($id);
+        $get_is_candidate_by_id = $this->persons_model->_get_is_candidate_by_id($id);
 
-        if (empty($get_by_id)) {
+        if (empty($get_is_candidate_by_id)) {
             $this->response([
                 'status' => FALSE,
                 'message' => 'Not Found'
             ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
         } else {
-            $this->response($get_by_id, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            $this->response($get_is_candidate_by_id, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
         }
     }
 
     public function create_post()
     {
         $data = [
-            'name' => $this->post('name'),
-            'max_selection' => $this->post('max_selection'),
-            'sequence' => $this->post('sequence'),
+            'prefix' => $this->post('prefix'),
+            'first_name' => $this->post('first_name'),
+            'last_name' => $this->post('last_name'),
+            'suffix' => $this->post('suffix'),
+            'group_id' => $this->post('group_id'),
+            'position_id' => $this->post('position_id'),
             'created_by' => $this->post('user_id'),
             'dt_created' => date('Y-m-d H:i:s')
         ];
@@ -106,7 +95,7 @@ class Positions extends REST_Controller
                 'message' => 'Bad Request'
             ], REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
         } else {
-            $this->positions_model->_create($data);
+            $this->persons_model->_create($data);
             $this->response([
                 'status' => TRUE,
                 'message' => 'Created'
@@ -117,9 +106,12 @@ class Positions extends REST_Controller
     public function update_put()
     {
         $data = [
-            'name' => $this->put('name'),
-            'max_selection' => $this->put('max_selection'),
-            'sequence' => $this->put('sequence'),
+            'prefix' => $this->put('prefix'),
+            'first_name' => $this->put('first_name'),
+            'last_name' => $this->put('last_name'),
+            'suffix' => $this->put('suffix'),
+            'group_id' => $this->put('group_id'),
+            'position_id' => $this->put('position_id'),
             'updated_by' => $this->put('user_id'),
             'dt_updated' => date('Y-m-d H:i:s')
         ];
@@ -132,7 +124,7 @@ class Positions extends REST_Controller
                 'message' => 'Bad Request'
             ], REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
         } else {
-            $this->positions_model->_update($id, $data);
+            $this->persons_model->_update($id, $data);
             $this->response([
                 'status' => TRUE,
                 'message' => 'Updated'
@@ -156,7 +148,7 @@ class Positions extends REST_Controller
                 'message' => 'Bad Request'
             ], REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
         } else {
-            $this->positions_model->_update($id, $data);
+            $this->persons_model->_update($id, $data);
             $this->response([
                 'status' => TRUE,
                 'message' => 'Deleted'
@@ -174,7 +166,7 @@ class Positions extends REST_Controller
                 'message' => 'Bad Request'
             ], REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
         } else {
-            $this->positions_model->_hard_delete($id);
+            $this->persons_model->_hard_delete($id);
             $this->set_response([
                 'status' => TRUE,
                 'message' => 'Deleted'
