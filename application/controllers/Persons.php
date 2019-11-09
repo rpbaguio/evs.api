@@ -99,6 +99,8 @@ class Persons extends REST_Controller
             'last_name' => $this->put('last_name'),
             'suffix' => $this->put('suffix'),
             'group_id' => $this->put('group_id'),
+            'is_candidate' => $this->put('is_candidate'),
+            'position_id' => $this->put('position_id'),
             'is_validated' => 1,
             'updated_by' => $this->put('user_id'),
             'dt_updated' => date('Y-m-d H:i:s')
